@@ -1,0 +1,10 @@
+<resources>
+    <string name="app_name">Student Management</string>
+    <string name="menu_add_student">Add Student</string>
+    <string name="menu_update">Update</string>
+    <string name="menu_delete">Delete</string>
+    <string name="menu_call">Call</string>
+    <string name="menu_email">Email</string>
+    <string name="action_save">Save</string>
+    <string name="confirmation_delete">Are you sure you want to delete this student?</string>
+</resources>
