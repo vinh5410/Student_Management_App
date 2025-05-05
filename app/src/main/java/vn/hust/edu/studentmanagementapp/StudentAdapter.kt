@@ -11,6 +11,7 @@ import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageButton
+import android.widget.ImageView
 import android.widget.TextView
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
@@ -21,67 +22,37 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 
 class StudentAdapter(
-    private val context: Context,
-    private val studentList: ArrayList<Student>
-) : RecyclerView.Adapter<StudentAdapter.StudentViewHolder>() {
+    private val students: List<Student>,
+    private val onMenuClick: (Int, Int) -> Unit
+) : RecyclerView.Adapter<StudentAdapter.ViewHolder>() {
 
-    inner class StudentViewHolder(view: View) : RecyclerView.ViewHolder(view) {
-        val tvName: TextView = view.findViewById(R.id.tvName)
-        val tvMSSV: TextView = view.findViewById(R.id.tvMSSV)
-        val btnMenu: ImageButton = view.findViewById(R.id.btnMenu)
+    inner class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+        val tvName: TextView = itemView.findViewById(R.id.tvName)
+        val tvId: TextView = itemView.findViewById(R.id.tvId)
+        val btnMenu: ImageView = itemView.findViewById(R.id.btnMenu)
     }
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): StudentViewHolder {
-        val view = LayoutInflater.from(context).inflate(R.layout.student_item, parent, false)
-        return StudentViewHolder(view)
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
+        val view = LayoutInflater.from(parent.context)
+            .inflate(R.layout.student_item, parent, false)
+        return ViewHolder(view)
     }
 
-    override fun onBindViewHolder(holder: StudentViewHolder, position: Int) {
-        val student = studentList[position]
+    override fun getItemCount(): Int = students.size
+
+    override fun onBindViewHolder(holder: ViewHolder, position: Int) {
+        val student = students[position]
         holder.tvName.text = student.name
-        holder.tvMSSV.text = student.mssv
+        holder.tvId.text = student.id
 
         holder.btnMenu.setOnClickListener {
-            val popup = PopupMenu(context, holder.btnMenu)
-            popup.menuInflater.inflate(R.menu.student_menu, popup.menu)
+            val popup = PopupMenu(holder.itemView.context, holder.btnMenu)
+            popup.inflate(R.menu.student_menu)
             popup.setOnMenuItemClickListener {
-                when (it.itemId) {
-                    R.id.menu_update -> {
-                        val intent = Intent(context, UpdateStudentActivity::class.java)
-                        intent.putExtra("student", student)
-                        intent.putExtra("position", position)
-                        (context as Activity).startActivityForResult(intent, 101)
-                    }
-
-                    R.id.menu_delete -> {
-                        AlertDialog.Builder(context)
-                            .setTitle("Xóa sinh viên")
-                            .setMessage("Bạn có chắc muốn xóa?")
-                            .setPositiveButton("Xóa") { _, _ ->
-                                studentList.removeAt(position)
-                                notifyDataSetChanged()
-                            }
-                            .setNegativeButton("Hủy", null)
-                            .show()
-                    }
-
-                    R.id.menu_call -> {
-                        val callIntent = Intent(Intent.ACTION_DIAL)
-                        callIntent.data = Uri.parse("tel:${student.phone}")
-                        context.startActivity(callIntent)
-                    }
-
-                    R.id.menu_email -> {
-                        val emailIntent = Intent(Intent.ACTION_SENDTO)
-                        emailIntent.data = Uri.parse("mailto:${student.email}")
-                        context.startActivity(emailIntent)
-                    }
-                }
+                onMenuClick(position, it.itemId)
                 true
             }
             popup.show()
         }
     }
-
-    override fun getItemCount(): Int = studentList.size
 }

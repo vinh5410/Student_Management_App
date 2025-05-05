@@ -1,5 +1,6 @@
 package vn.hust.edu.studentmanagementapp
 
+import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
 import android.widget.Button
@@ -8,42 +9,28 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 
 class AddStudentActivity : AppCompatActivity() {
-    private var student: Student? = null
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_add_student)
+        setContentView(R.layout.activity_add_update_student)
 
-        val nameEditText: EditText = findViewById(R.id.edtName)
-        val mssvEditText: EditText = findViewById(R.id.edtMSSV)
-        val emailEditText: EditText = findViewById(R.id.edtEmail)
-        val phoneEditText: EditText = findViewById(R.id.edtPhone)
-        val saveButton: Button = findViewById(R.id.btnSave)
+        val edtName = findViewById<EditText>(R.id.edtName)
+        val edtId = findViewById<EditText>(R.id.edtId)
+        val edtEmail = findViewById<EditText>(R.id.edtEmail)
+        val edtPhone = findViewById<EditText>(R.id.edtPhone)
+        val btnSave = findViewById<Button>(R.id.btnSave)
 
-        student = intent.getParcelableExtra("student")
-        student?.let {
-            nameEditText.setText(it.name)
-            mssvEditText.setText(it.mssv)
-            emailEditText.setText(it.email)
-            phoneEditText.setText(it.phone)
-        }
+        btnSave.setOnClickListener {
+            val student = Student(
+                name = edtName.text.toString(),
+                id = edtId.text.toString(),
+                email = edtEmail.text.toString(),
+                phone = edtPhone.text.toString()
+            )
 
-        saveButton.setOnClickListener {
-            val name = nameEditText.text.toString()
-            val mssv = mssvEditText.text.toString()
-            val email = emailEditText.text.toString()
-            val phoneNumber = phoneEditText.text.toString()
-
-            if (name.isNotEmpty() && mssv.isNotEmpty() && email.isNotEmpty() && phoneNumber.isNotEmpty()) {
-                val updatedStudent = Student(name, mssv, email, phoneNumber)
-                val resultIntent = Intent().apply {
-                    putExtra("student", updatedStudent)
-                }
-                setResult(RESULT_OK, resultIntent)
-                finish()
-            } else {
-                Toast.makeText(this, "Vui lòng điền đầy đủ thông tin", Toast.LENGTH_SHORT).show()
-            }
+            val resultIntent = Intent()
+            resultIntent.putExtra("student", student)
+            setResult(Activity.RESULT_OK, resultIntent)
+            finish()
         }
     }
 }

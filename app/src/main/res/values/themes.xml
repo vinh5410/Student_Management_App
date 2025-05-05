@@ -5,5 +5,5 @@
         <!-- <item name="colorPrimary">@color/my_light_primary</item> -->
     </style>
 
-    <style name="Theme.StudentManagementApp" parent="Base.Theme.StudentManagementApp" />
+    <style name="Theme.StudentManagementApp" parent="Theme.AppCompat.Light.DarkActionBar" />
 </resources>
